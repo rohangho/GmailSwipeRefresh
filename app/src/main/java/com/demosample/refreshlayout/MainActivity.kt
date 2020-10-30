@@ -1,9 +1,7 @@
 package com.demosample.refreshlayout
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
-import android.view.ViewTreeObserver.OnScrollChangedListener
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
@@ -50,9 +48,10 @@ class MainActivity : AppCompatActivity() {
 
     private fun loadWebPage() {
         webDisplayer.loadUrl(currentUrl)
-        webDisplayer.onScrollChangedCallback = OnScrollChangedCallback { l, t, oldl, oldt ->
-            swipeRefresher.isEnabled = t == 0
-
+        webDisplayer.onScrollChangedCallback = object : OnScrollChangedCallback {
+            override fun onScroll(l: Int, t: Int, oldl: Int, oldt: Int) {
+                swipeRefresher.isEnabled = t == 0
+            }
         }
         webDisplayer.webViewClient = object : WebViewClient() {
             override fun shouldOverrideUrlLoading(
