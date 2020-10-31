@@ -23,7 +23,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        currentUrl = "https://www.amazon.com/"
+        currentUrl = "https://www.moneycontrol.com/"
 
 
         swipeRefresher = findViewById(R.id.swipeRefreshLayout)
@@ -33,7 +33,7 @@ class MainActivity : AppCompatActivity() {
         swipeRefresher.setOnRefreshListener {
             webDisplayer.reload()
         }
-        loadPage()
+        loadMobilePage()
 
 
     }
@@ -50,10 +50,10 @@ class MainActivity : AppCompatActivity() {
             R.id.desktopVersion -> {
                 if (item.isChecked) {
                     item.isChecked = false
-                    setDesktopMode(webDisplayer, false)
+                    loadMobilePage()
                 } else {
                     item.isChecked = true
-                    setDesktopMode(webDisplayer, true)
+                    loadDesktopPage()
                 }
             }
         }
@@ -61,7 +61,7 @@ class MainActivity : AppCompatActivity() {
         return super.onOptionsItemSelected(item)
     }
 
-    private fun loadPage() {
+    private fun loadDesktopPage() {
         webDisplayer.loadUrl(currentUrl)
 
         webDisplayer.onScrollChangedCallback = object : OnScrollChangedCallback {
@@ -74,6 +74,7 @@ class MainActivity : AppCompatActivity() {
                 view: WebView,
                 request: WebResourceRequest
             ): Boolean {
+                currentUrl = request.url.toString()
                 view.loadUrl(request.url.toString())
                 return true
             }
@@ -86,7 +87,50 @@ class MainActivity : AppCompatActivity() {
 
             }
 
+            override fun onLoadResource(view: WebView?, url: String?) {
+                view!!.evaluateJavascript(
+                    "document.querySelector('meta[name=\"viewport\"]').setAttribute('content', 'width=1024px, initial-scale=' + (document.documentElement.clientWidth / 1024));",
+                    null
+                )
+            }
 
+        }
+        webDisplayer.settings.loadsImagesAutomatically = true
+        webDisplayer.settings.javaScriptEnabled = true
+        webDisplayer.setLayerType(View.LAYER_TYPE_HARDWARE, null)
+        webDisplayer.scrollBarStyle = View.SCROLLBARS_OUTSIDE_OVERLAY
+        webDisplayer.settings.loadWithOverviewMode = true
+        webDisplayer.settings.useWideViewPort = true
+        webDisplayer.settings.setSupportZoom(true)
+        webDisplayer.settings.builtInZoomControls = true
+        webDisplayer.settings.displayZoomControls = false
+    }
+
+    private fun loadMobilePage() {
+        webDisplayer.loadUrl(currentUrl)
+
+        webDisplayer.onScrollChangedCallback = object : OnScrollChangedCallback {
+            override fun onScroll(l: Int, t: Int, oldl: Int, oldt: Int) {
+                swipeRefresher.isEnabled = t == 0
+            }
+        }
+        webDisplayer.webViewClient = object : WebViewClient() {
+            override fun shouldOverrideUrlLoading(
+                view: WebView,
+                request: WebResourceRequest
+            ): Boolean {
+                currentUrl = request.url.toString()
+                view.loadUrl(request.url.toString())
+                return true
+            }
+
+
+            override fun onPageFinished(view: WebView?, url: String?) {
+                super.onPageFinished(view, url)
+                Log.e("TAG", "shouldOverrideUrlLoading: " + url.toString())
+                swipeRefresher.isRefreshing = false
+
+            }
 
         }
         webDisplayer.settings.loadsImagesAutomatically = true
@@ -94,34 +138,6 @@ class MainActivity : AppCompatActivity() {
 
         webDisplayer.setLayerType(View.LAYER_TYPE_HARDWARE, null)
         webDisplayer.scrollBarStyle = View.SCROLLBARS_INSIDE_OVERLAY
-    }
-
-    fun setDesktopMode(webView: WebView, enabled: Boolean) {
-        var newUserAgent = webView.settings.userAgentString
-        if (enabled) {
-            try {
-                newUserAgent =
-                    "Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.0.4) Gecko/20100101 Firefox/4.0"
-
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-        } else {
-            newUserAgent = null
-        }
-        webView.settings.userAgentString = newUserAgent
-        webView.settings.useWideViewPort = enabled
-        if (enabled) {
-            webView.scrollBarStyle = View.SCROLLBARS_INSIDE_OVERLAY
-        } else {
-            webView.scrollBarStyle = WebView.SCROLLBARS_OUTSIDE_OVERLAY
-        }
-        webView.settings.loadWithOverviewMode = enabled
-        webView.settings.setSupportZoom(true)
-        webView.settings.loadWithOverviewMode = enabled
-        webView.settings.builtInZoomControls = enabled
-        webView.settings.displayZoomControls = false
-        webView.reload()
     }
 
 
