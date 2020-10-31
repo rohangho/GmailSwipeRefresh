@@ -23,7 +23,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        currentUrl = "https://www.flipkart.com/"
+        currentUrl = "https://www.amazon.com/"
 
 
         swipeRefresher = findViewById(R.id.swipeRefreshLayout)
@@ -87,6 +87,7 @@ class MainActivity : AppCompatActivity() {
             }
 
 
+
         }
         webDisplayer.settings.loadsImagesAutomatically = true
         webDisplayer.settings.javaScriptEnabled = true
@@ -110,8 +111,16 @@ class MainActivity : AppCompatActivity() {
         }
         webView.settings.userAgentString = newUserAgent
         webView.settings.useWideViewPort = enabled
+        if (enabled) {
+            webView.scrollBarStyle = View.SCROLLBARS_INSIDE_OVERLAY
+        } else {
+            webView.scrollBarStyle = WebView.SCROLLBARS_OUTSIDE_OVERLAY
+        }
         webView.settings.loadWithOverviewMode = enabled
-        webView.settings.setSupportZoom(enabled)
+        webView.settings.setSupportZoom(true)
+        webView.settings.loadWithOverviewMode = enabled
+        webView.settings.builtInZoomControls = enabled
+        webView.settings.displayZoomControls = false
         webView.reload()
     }
 
