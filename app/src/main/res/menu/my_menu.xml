@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <!--    <item-->
+    <!--        android:id="@+id/desktopSite"-->
+    <!--        android:title="Desktop Site"-->
+    <!--        -->
+    <!--        />-->
+
+    <item
+        android:id="@+id/desktopVersion"
+        android:checkable="true"
+        android:icon="@android:drawable/ic_menu_preferences"
+        android:title="Desktop Version"
+        android:titleCondensed="Persist" />
+</menu>
