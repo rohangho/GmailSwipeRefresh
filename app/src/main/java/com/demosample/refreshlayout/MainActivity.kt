@@ -23,7 +23,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        currentUrl = "https://www.moneycontrol.com/"
+        currentUrl = "https://www.flipkart.com/"
 
 
         swipeRefresher = findViewById(R.id.swipeRefreshLayout)
@@ -103,6 +103,7 @@ class MainActivity : AppCompatActivity() {
         webDisplayer.settings.useWideViewPort = true
         webDisplayer.settings.setSupportZoom(true)
         webDisplayer.settings.builtInZoomControls = true
+        webDisplayer.setInitialScale(1)
         webDisplayer.settings.displayZoomControls = false
     }
 
@@ -126,6 +127,7 @@ class MainActivity : AppCompatActivity() {
 
 
             override fun onPageFinished(view: WebView?, url: String?) {
+                currentUrl = url!!
                 super.onPageFinished(view, url)
                 Log.e("TAG", "shouldOverrideUrlLoading: " + url.toString())
                 swipeRefresher.isRefreshing = false
